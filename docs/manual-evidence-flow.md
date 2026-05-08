@@ -50,6 +50,39 @@ Captures a named approval for a scope (in this flow: `"scope": "model_promoted"`
 
 Records promotion intent; policies typically accept this only after prerequisites are satisfied.
 
+## Human Approval Gate (`human_approved`)
+
+Human approval is a **critical compliance gate** in GovAI. Many policies require explicit human sign-off before a model can be promoted to production.
+
+### Why Human Approval Matters
+Even if all technical evidence (data registration, training, evaluation, risk review) is complete, the compliance verdict will remain **`BLOCKED`** until a proper `human_approved` event is recorded for the `model_promoted` scope.
+
+### Required Fields for `human_approved`
+
+```json
+{
+  "event_type": "human_approved",
+  "run_id": "YOUR_RUN_ID",
+  "payload": {
+    "scope": "model_promoted",
+    "decision": "approve",
+    "approved": true,
+    "approver": "compliance_officer@example.com",
+    "justification": "Reviewed evaluation results, risk assessment, and mitigation plan. All criteria satisfied.",
+    "ai_system_id": "expense-ai",
+    "model_version_id": "...",
+    "assessment_id": "...",
+    "risk_id": "..."
+  }
+}
+```
+### Related Commands & Examples
+
+- Use the dedicated approve CLI: `python -m aigov_py.approve ...`
+- See `python -m aigov_py.approve --help` for all options
+- Full end-to-end example is available in `docs/golden-path.md`
+- For CI usage, see `docs/github-action.md`
+
 ## Copy/paste: submit the full sequence via `POST /evidence`
 
 This script submits the full sequence above to `POST $GOVAI_AUDIT_BASE_URL/evidence`.
